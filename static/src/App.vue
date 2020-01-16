@@ -15,7 +15,7 @@
           <b-navbar-nav>
             <b-nav-item href="/sick_lists" to="/sick_lists">Больничные листы</b-nav-item>
             <b-nav-item href="/consultants" to="/consultants">Консультанты</b-nav-item>
-            <b-nav-item href="/patients" to="/patients">Пациенты</b-nav-item>
+<!--            <b-nav-item href="/patients" to="/patients">Пациенты</b-nav-item>-->
             <b-nav-item href="/diagnoses" to="/diagnoses">Болезни</b-nav-item>
             <b-nav-item href="/departments" to="/departments">Отделения</b-nav-item>
 

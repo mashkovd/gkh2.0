@@ -175,6 +175,9 @@
               <b-button variant="primary" size="sm" class="mr-2 text-center" @click="get_csv">
                 Выгрузить в csv
               </b-button>
+              <b-button variant="primary" size="sm" class="mr-2" v-b-modal.sicklist-modal>
+                Добавить запись
+              </b-button>
             </b-form-group>
           </b-col>
 
@@ -194,7 +197,7 @@
 
       <b-table
         id="sick_list_table"
-        ref="table"
+        ref="sick_list_table"
         small
         fixed
         :filter="filter"
@@ -301,15 +304,41 @@
             label="Пациент:"
             label-cols-sm="8"
             label-cols-lg="4"
-            label-for="patient_id">
-            <b-form-select
-              id="patient_id"
-              :options="patients_options"
-              v-model="form_data.sick_lists_patient_id"
+            label-for="patient_sur_name">
+            <b-form-input
+              id="patient_sur_name"
+              v-model="form_data.sick_lists_patient_sur_name"
               required
-              autocomplete="on"
-            ></b-form-select>
+            ></b-form-input>
           </b-form-group>
+
+          <b-form-group
+            label="Возраст:"
+            label-cols-sm="8"
+            label-cols-lg="4"
+            label-for="patient_age">
+            <b-form-input
+              id="patient_age"
+              v-model="form_data.sick_lists_patient_age"
+              type="number"
+              min="0"
+              max="100"
+            ></b-form-input>
+          </b-form-group>
+
+          <!--          <b-form-group-->
+          <!--            label="Пациент:"-->
+          <!--            label-cols-sm="8"-->
+          <!--            label-cols-lg="4"-->
+          <!--            label-for="patient_id">-->
+          <!--            <b-form-select-->
+          <!--              id="patient_id"-->
+          <!--              :options="patients_options"-->
+          <!--              v-model="form_data.sick_lists_patient_id"-->
+          <!--              required-->
+          <!--              autocomplete="on"-->
+          <!--            ></b-form-select>-->
+          <!--          </b-form-group>-->
 
           <b-form-group
             label="Коррекция:"
@@ -366,12 +395,18 @@
             </b-form-select>
           </b-form-group>
 
-          <b-form-textarea
-            size="sm"
-            placeholder="Комментарий"
-          >
-            <b-form-input id="comment"></b-form-input>
-          </b-form-textarea>
+          <b-form-group
+            label="Комментарий:"
+            label-cols-sm="8"
+            label-cols-lg="4"
+            label-for="sl_comment">
+            <b-form-textarea
+
+              v-model="form_data.sick_lists_comment">
+
+            </b-form-textarea>
+          </b-form-group>
+
           <b-form-group class="text-center"
                         label-cols-sm="10">
             <b-button type="submit" variant="primary" class="text-center">Добавить</b-button>
@@ -432,11 +467,13 @@
                     "consultant_id": null,
                     "number_of_sl": null,
                     "number_of_consultation": null,
-                    "patient_id": null,
+                    "patient_sur_name": null,
+                    "patient_age": null,
                     "correction": null,
                     "department_id": null,
                     "diagnose_id": null,
                     "reason_id": null,
+                    "comment": null
                 },
 
             }
@@ -445,10 +482,10 @@
         methods: {
             del_current_row(row) {
                 let promise = axios.delete('/api/sick_lists', {data: {id: row.item.sick_lists_id}}
-                )
+                );
 
                 return promise.then((data) => {
-                    this.$refs.table.refresh()
+                    this.$refs.sick_list_table.refresh()
 
                 }).catch(error => {
                     return []
@@ -457,6 +494,7 @@
             },
             set_current_row(row) {
                 this.form_data = row.item
+
             },
             myProvider(ctx) {
                 let promise = axios.get('/api/sick_lists',
@@ -466,7 +504,7 @@
                             currentPage: ctx.currentPage,
                             filter: ctx.filter,
                         }
-                    })
+                    });
 
                 return promise.then((data) => {
                     this.items = data.data.items;
@@ -501,7 +539,7 @@
                     .catch(error => console.log(error));
                 axios.get('/api/diagnoses')
                     .then(response => {
-                        this.diagnoses_options = response.data.items
+                        this.diagnoses_options = response.data.items;
                         this.reasons_options = response.data.items
                     })
                     .catch(error => console.log(error));
@@ -510,8 +548,8 @@
             onSubmit(evt) {
                 evt.preventDefault();
                 this.$refs.addSickList.hide();
-                let promise = axios.post('/api/sick_lists', this.form_data)
-                this.$refs.table.refresh()
+                let promise = axios.post('/api/sick_lists', this.form_data);
+                this.$refs.sick_list_table.refresh();
                 return promise.then((data) => {
 
                 }).catch(error => {
@@ -551,7 +589,7 @@
                 )
                     .then(response => {
                         let csvContent = "data:text/csv;charset=utf-8,";
-                        csvContent += response.data.csv_data
+                        csvContent += response.data.csv_data;
 
                         const data = encodeURI(csvContent);
                         const link = document.createElement("a");

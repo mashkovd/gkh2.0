@@ -96,13 +96,13 @@ SICKLIST_FIELDS = \
 
         ),
         dict(
-            key=f'{Patients.__tablename__}_patient_sur_name',
+            key=f'{SickLists.__tablename__}_patient_sur_name',
             label='Пациент',
             
 
         ),
         dict(
-            key=f'{Patients.__tablename__}_patient_age',
+            key=f'{SickLists.__tablename__}_patient_age',
             label='Возраст',
             
 
