@@ -49,7 +49,7 @@ app.config['BASIC_AUTH_PASSWORD'] = '12345'
 app.config['BASIC_AUTH_FORCE'] = True
 
 
-# @basic_auth.required
+@basic_auth.required
 @app.route('/')
 def index():
     return app.send_static_file("index.html")
@@ -58,12 +58,12 @@ def index():
 def get_dict_from_cursor(res):
     return [dict(item.items()) for item in res]
 
-
+@basic_auth.required
 @app.route('/<path:path>')
 def static_dist(path):
     return send_from_directory("static/dist", path)
 
-
+@basic_auth.required
 @app.route('/api/consultants')
 def consultants():
     with session_scope() as session:
@@ -77,7 +77,7 @@ def consultants():
         'fields': CONSULTANTS_FIELDS
     })
 
-
+@basic_auth.required
 @app.route('/api/patients', methods=['GET', 'POST'])
 def patients():
     if request.method == 'GET':
@@ -98,7 +98,7 @@ def patients():
 
         return Response({'result': 'Ok'}, 200)
 
-
+@basic_auth.required
 @app.route('/api/departments', methods=['GET', 'POST'])
 def departments():
     if request.method == 'GET':
@@ -119,7 +119,7 @@ def departments():
 
         return Response({'result': 'Ok'}, 200)
 
-
+@basic_auth.required
 @app.route('/api/diagnoses', methods=['GET', 'POST'])
 def diagnoses():
     if request.method == 'GET':
@@ -138,7 +138,7 @@ def diagnoses():
 
             return Response({'result': 'Ok'}, 200)
 
-
+@basic_auth.required
 @app.route('/api/csv')
 def csv():
     with session_scope() as session:
@@ -196,7 +196,7 @@ def csv():
             'csv_data': csv_data,
         })
 
-
+@basic_auth.required
 @app.route('/api/sick_lists', methods=['GET', 'POST', 'DELETE'])
 def sick_lists():
     if request.method == 'GET':
@@ -220,6 +220,7 @@ def sick_lists():
             diagnose = json.loads(request.args.get('filter')).get('diagnose')
             patient = json.loads(request.args.get('filter')).get('patient')
             select_date = json.loads(request.args.get('filter')).get('select_date')
+            number_of_sl = json.loads(request.args.get('filter')).get('number_of_sl')
         with session_scope() as session:
             s = session.query(SickLists.id,
                               SickLists.sl_date,
@@ -258,6 +259,9 @@ def sick_lists():
                 s = s.filter(SickLists.patient_sur_name.like(f"{patient}%"))
             if select_date is not None and select_date != '':
                 s = s.filter(SickLists.sl_date == select_date)
+            if number_of_sl:
+                s = s.filter(SickLists.number_of_sl == int(number_of_sl))
+
             res = session.execute(s.order_by(desc(SickLists.sl_date))).fetchall()
             total_rows = len(res)
             if cur_page is not None and per_page is not None:

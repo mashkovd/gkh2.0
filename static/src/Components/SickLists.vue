@@ -36,6 +36,17 @@
           </b-form-group>
 
         </b-col>
+        <b-col sm="1" md="3" class="my-1">
+          <b-form-group class="text-right"
+          >
+            <b-button variant="primary" size="sm" class="mr-2 text-center" @click="get_csv">
+              Выгрузить в csv
+            </b-button>
+            <b-button variant="primary" size="sm" class="mr-2" v-b-modal.sicklist-modal>
+              Добавить запись
+            </b-button>
+          </b-form-group>
+        </b-col>
 
 
       </b-row>
@@ -170,16 +181,22 @@
             </b-form-group>
           </b-col>
           <b-col sm="1" md="3" class="my-1">
-            <b-form-group class="text-right"
+            <b-form-group
+              label-cols-lg="3"
+              label="Номер БЛ"
+              label-size="sm"
+
+              label-for="select_number_of_sl"
             >
-              <b-button variant="primary" size="sm" class="mr-2 text-center" @click="get_csv">
-                Выгрузить в csv
-              </b-button>
-              <b-button variant="primary" size="sm" class="mr-2" v-b-modal.sicklist-modal>
-                Добавить запись
-              </b-button>
+              <b-form-input id="select_number_of_sl" type="number" v-model="filter.number_of_sl">
+                <template v-slot:first>
+                  <option :value="null">-- Укажите номер бл --</option>
+                </template>
+              </b-form-input>
+
             </b-form-group>
           </b-col>
+
 
         </b-row>
       </b-form-group>
@@ -443,6 +460,7 @@
                     department: null,
                     patient: null,
                     select_date: null,
+                    number_of_sl: null,
 
                 },
                 filterOn: [],
