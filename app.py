@@ -49,19 +49,21 @@ app.config['BASIC_AUTH_PASSWORD'] = '12345'
 app.config['BASIC_AUTH_FORCE'] = True
 
 
+def get_dict_from_cursor(res):
+    return [dict(item.items()) for item in res]
+
+
 @basic_auth.required
 @app.route('/')
 def index():
     return app.send_static_file("index.html")
 
 
-def get_dict_from_cursor(res):
-    return [dict(item.items()) for item in res]
-
 @basic_auth.required
-@app.route('/<path:path>')
+@app.route('/dist/<path:path>')
 def static_dist(path):
     return send_from_directory("static/dist", path)
+
 
 @basic_auth.required
 @app.route('/api/consultants')
@@ -76,6 +78,7 @@ def consultants():
         'items': get_dict_from_cursor(res),
         'fields': CONSULTANTS_FIELDS
     })
+
 
 @basic_auth.required
 @app.route('/api/patients', methods=['GET', 'POST'])
@@ -98,6 +101,7 @@ def patients():
 
         return Response({'result': 'Ok'}, 200)
 
+
 @basic_auth.required
 @app.route('/api/departments', methods=['GET', 'POST'])
 def departments():
@@ -119,6 +123,7 @@ def departments():
 
         return Response({'result': 'Ok'}, 200)
 
+
 @basic_auth.required
 @app.route('/api/diagnoses', methods=['GET', 'POST'])
 def diagnoses():
@@ -137,6 +142,7 @@ def diagnoses():
             session.add(Diagnoses(**request.json))
 
             return Response({'result': 'Ok'}, 200)
+
 
 @basic_auth.required
 @app.route('/api/csv')
@@ -195,6 +201,7 @@ def csv():
         return jsonify({
             'csv_data': csv_data,
         })
+
 
 @basic_auth.required
 @app.route('/api/sick_lists', methods=['GET', 'POST', 'DELETE'])
